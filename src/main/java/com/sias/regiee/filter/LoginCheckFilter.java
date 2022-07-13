@@ -1,6 +1,7 @@
 package com.sias.regiee.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.sias.regiee.common.BaseContext;
 import com.sias.regiee.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -64,6 +65,10 @@ public class LoginCheckFilter implements Filter {
         /*05.判断登陆状态，如果已经登陆，直接放行*/
         if (request.getSession().getAttribute("employee") !=null){
             log.info("用户已经登陆，用户id为{}",request.getSession().getAttribute("employee"));
+
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrent(empId);
+
             filterChain.doFilter(request,response);
             return;
         }
