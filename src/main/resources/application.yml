@@ -19,3 +19,8 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+
+
+#配置文件执行具体的位置
+regiee:
+  path: D:\\Document\\

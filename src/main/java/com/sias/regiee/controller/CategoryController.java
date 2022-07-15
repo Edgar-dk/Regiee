@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author Edgar
@@ -54,7 +55,7 @@ public class CategoryController {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Category::getSort);
 
-        Page page1 = categoryService.page(pageInfo, wrapper);
+        categoryService.page(pageInfo, wrapper);
         return R.success(pageInfo);
     }
 
@@ -79,6 +80,27 @@ public class CategoryController {
             return R.error("修改失败");
         }
         return R.success("修改成功");
+    }
+
+
+    /*5.根据条件查询菜品分类*/
+    @GetMapping("/list")
+    public R<List<Category>> selectList(Category category){
+        /*01.先把数据封装在category里面
+        *    可以为以后操作数据方便，构造条件的时候
+        *    先去按照Type去升序的排列，Type一样的话
+        *    在去按照更新的时间排列*/
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(category.getType()!=null,Category::getType,category.getType())
+                .orderByAsc(Category::getType)
+                .orderByDesc(Category::getUpdateTime);
+        /*02.查询到的数据，按照集合的形式返回给前端
+        *    前端收到数据之后，间接性处理数据，有的
+        *    数据需要去处理，有的不需要处理
+        *    注意：应该说在数据库中查询到的数据全部返回给
+        *    前端，前端按照需求处理这些数据*/
+        List<Category> list = categoryService.list(wrapper);
+        return R.success(list);
     }
 
 }
